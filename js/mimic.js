@@ -8,19 +8,54 @@
     * ==================== */
 
     var Mimic = function (element, options) {
+        var obj = this;
         this.element = $(element);
         this.options = this.element.data();
+        this.indicies = [];
+        this.last_index = 0;
+        if ($(this.options.mimicEl).length === 1) {
+          $(this.options.mimicEl).attr('id').replace(/\d/, function(str) { 
+            obj.last_index = parseInt(str) + 1; 
+          });
+        }
+        if (this.options.limit) {
+            for (var i=0; i<this.options.limit; i++) { 
+              this.indicies.push(i);
+              if ( i === this.options.limit) {
+                 this.last_index = i; 
+              }
+            } 
+        }
+
     };
 
     Mimic.prototype = {
 
         constructor: Mimic,
 
-        replicate: function () {
-          var $el_to_copy = $(this.options.mimicEl)
-          $el_to_copy.clone().insertAfter(this.options.mimicEl);
-        }
+       replicate: function () {
+            var $mimic_el = $(this.options.mimicEl),
+                $clone = $mimic_el.clone(),
+                index = this.last_index++;
+                
+            // check if the element we're trying to replicate exists
+            if ($mimic_el.length === 1) {
+                // update element's ID
+                $clone.attr('id', $clone.attr('id').replace(/\d/, index));
+                // update children's ID and names
+                $clone.find('[id]').each(function() { 
+                  $(this).attr('id', $(this).attr('id').replace(/\d/, index) );
+                }).find('[name]').each(function() { 
+                  $(this).attr('name', $(this).attr('name').replace(/\d/, index) );
+                });
 
+                // insert the clone before trigger
+                $clone.insertBefore(this.element);
+
+            } else {
+                console.log("Mimicked element doesn't exist or is referring to too many elements: " + this.options.mimicEl);
+            }
+        }
     };
 
 
