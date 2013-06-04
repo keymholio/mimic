@@ -14,19 +14,10 @@
         this.indicies = [];
         this.last_index = 0;
         if ($(this.options.mimicEl).length === 1) {
-            $(this.options.mimicEl).attr('id').replace(/\d/, function(str) { 
-                obj.last_index = parseInt(str) + 1; 
-            });
+          $(this.options.mimicEl).attr('id').replace(/\d/, function(str) { 
+            obj.last_index = parseInt(str) + 1; 
+          });
         }
-        if (this.options.limit) {
-            for (var i=0; i<this.options.limit; i++) { 
-                this.indicies.push(i);
-                if ( i === this.options.limit) {
-                    this.last_index = i; 
-                }
-            } 
-        }
-
     };
 
     Mimic.prototype = {
@@ -53,11 +44,12 @@
                 // adding the remove link
                 var $removelink_container = $clone.find('[data-mimic-remove]');
                 $removelink_container.append('<a href="#">Remove</a>');
-                var $removelink = $removelink_container.children('a');
+                var $removelink = $removelink_container.children('a'),
+                    clone_id = '#' + $clone.attr('id');
                 $removelink.attr({
-                    'data-mimic-remove': '#' + $clone.attr('id'),
-                    'data-mimic-src': this.element.data('mimicEl')
-                });              
+                  'data-mimic-remove': clone_id,
+                  'data-mimic-src': this.element.data('mimicEl')
+                 });              
               
                 // insert the clone before trigger
                 $clone.insertBefore(this.element);
@@ -71,7 +63,12 @@
         },
       
         remove: function () {
-            $(this.options.mimicRemove).remove();
+            var remove_id = this.options.mimicRemove,
+                $trigger = $('[data-mimic-el=' + this.options.mimicSrc + ']'),
+                el_index = parseInt(remove_id.match(/\d/)[0]),
+                index = $trigger.data('mimic').indicies.indexOf(el_index);
+            $(remove_id).remove();
+            $trigger.data('mimic').indicies.splice(index);
         }
     };
 
@@ -82,7 +79,6 @@
     $.fn.mimic = function (option) {
         return this.each(function () {
             var $this = $(this),
-                $el = $el ? $el : "",
                 data = $this.data('mimic');
             if (!data) {
                 $this.data('mimic', (data = new Mimic(this)));
