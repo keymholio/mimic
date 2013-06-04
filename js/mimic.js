@@ -12,6 +12,7 @@
         this.element = $(element);
         this.options = this.element.data();
         this.indicies = [];
+        this.limit = this.options.mimicLimit;
         this.last_index = 0;
         if ($(this.options.mimicEl).length === 1) {
           $(this.options.mimicEl).attr('id').replace(/\d/, function(str) { 
@@ -24,11 +25,31 @@
 
         constructor: Mimic,
 
-       replicate: function () {
+        replicate: function () {
             var $mimic_el = $(this.options.mimicEl),
                 $clone = $mimic_el.clone(),
-                index = this.last_index++;
-                
+                index = this.last_index++,
+                limit = this.limit ? this.limit - 1 : null;
+         
+            if (limit) {
+                index = index > limit ? this.last_index = 1 : index;  
+              
+                if (this.indicies.length === (limit - 1)) {
+                   this.element.hide(); 
+                } 
+              
+                // update indicies tracker
+                while (this.indicies.indexOf(index) !== -1) {
+                  if (index < limit) {
+                      index++; 
+                  } else {
+                     index = 1; 
+                  }
+                } d  
+            }
+            
+            this.indicies.push(index);
+         
             // check if the element we're trying to replicate exists
             if ($mimic_el.length === 1) {
                 // update element's ID
@@ -53,9 +74,6 @@
               
                 // insert the clone before trigger
                 $clone.insertBefore(this.element);
-              
-                // update indicies
-                this.indicies.push(index);
 
             } else {
                 console.log("Mimicked element doesn't exist or is referring to too many elements: " + this.options.mimicEl);
@@ -67,8 +85,13 @@
                 $trigger = $('[data-mimic-el=' + this.options.mimicSrc + ']'),
                 el_index = parseInt(remove_id.match(/\d/)[0]),
                 index = $trigger.data('mimic').indicies.indexOf(el_index);
-            $(remove_id).remove();
-            $trigger.data('mimic').indicies.splice(index);
+            if ($(remove_id).length === 1) {
+                $(remove_id).remove();
+                $trigger.data('mimic').indicies.splice(index, 1);
+                $trigger.show();
+            } else {
+                console.log("Remove element doesn't exist or is referring to too many elements: " + remove_id);
+            }
         }
     };
 
