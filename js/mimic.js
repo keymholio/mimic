@@ -45,7 +45,7 @@
                   } else {
                      index = 1; 
                   }
-                } d  
+                }   
             }
             
             this.indicies.push(index);
