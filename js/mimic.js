@@ -81,7 +81,7 @@
                     $(this).attr('id', $(this).attr('id').replace(/\d/, index));
                 });
                 $clone.find('[name]').each(function() {
-                    $(this).attr('name', $(this).attr('name').replace(/\d/, index));
+                    $(this).attr('name', $(this).attr('name').replace(/\d/, index)).val('');
                 });
 
                 // adding the remove link
