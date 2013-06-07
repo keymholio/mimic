@@ -13,6 +13,8 @@
         this.indicies = [];
         this.limit = this.options.mimicLimit;
         this.last_index = 0;
+        this.remove_els = this.options.mimicRemoveEls;
+        this.remove_classes = this.options.mimicRemoveClasses;
     };
 
     Mimic.prototype = {
@@ -44,7 +46,7 @@
 
         replicate: function () {
             var $mimic_el = $(this.options.mimicEl),
-                $clone = $mimic_el.clone(),
+                $clone = this.clean($mimic_el.clone()),
                 index,
                 limit = this.limit ? this.limit - 1 : null;
 
@@ -97,6 +99,24 @@
             } else {
                 console.log("Mimicked element doesn't exist or is referring to too many elements: " + this.options.mimicEl);
             }
+        },
+      
+        clean: function ($clone) {
+            var $clean_item,
+                remove_classes;
+            if (this.remove_els) { 
+                $clone.find(this.remove_els).remove(this.remove_els).end();
+            }
+            if (this.remove_classes) {
+                remove_classes = this.remove_classes.replace(/\.|\s/g, "").split(',');
+                $clone.find(this.remove_classes).each(function () {
+                    $clean_item = $(this);
+                    $.each(remove_classes, function(index, css_class) {
+                        $clean_item.removeClass(css_class)
+                    });
+                });  
+            }
+            return $clone;
         },
 
         remove: function () {
