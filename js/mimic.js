@@ -86,15 +86,15 @@
                 });
 
                 // adding the remove link
-                if (this.options.remove_link) {
-                    $clone.find('[data-mimic-remove]').append('<a href="#">Remove</a>');
+                if (this.options.removeLink) {
+                  $clone.find('[data-mimic-remove]').append('<a href="javascript:void(0);">Remove</a>');
                 }
               
                 this.last_element = $clone.attr('id');
 
                 $clone.insertAfter(this.element);
               
-                this.element.trigger('cloned');
+                this.element.trigger('cloned', ['#' + $clone.attr('id')]);
 
             } else {
                 console.log("Mimicked element doesn't exist or is referring to too many elements: " + this.element.attr('id'));
@@ -103,14 +103,14 @@
         
         clean: function ($clone) {
             var $clean_item,
-                remove_elements = this.options.remove_elements,
-                remove_classes = this.options.remove_classes;
+                remove_elements = this.options.removeElements,
+                remove_classes = this.options.removeClasses;
             if (remove_elements) { 
                 $clone.find(remove_elements).remove(remove_elements).end();
             }
-            if (this.options.remove_classes) {
+            if (this.options.removeClasses) {
                 remove_classes = remove_classes.replace(/\.|\s/g, "").split(',');
-                $clone.find(this.options.remove_classes).each(function () {
+                $clone.find(this.options.removeClasses).each(function () {
                     $clean_item = $(this);
                     $.each(remove_classes, function(index, css_class) {
                         $clean_item.removeClass(css_class)
@@ -131,6 +131,7 @@
                 if ($source.options.limit) {
                     $($source.options.trigger).show();
                 }
+                $(source_id).trigger('removed', ['#' + this.element.attr('id')]);
             } else {
                 console.log("Remove element doesn't exist or is referring to too many elements: " + $(this).attr('id'));
             }
@@ -162,9 +163,9 @@
   
     $.fn.mimic.defaults = {
         limit: false,
-        remove_link: false,
-        remove_elements: false,
-        remove_classes: false,
+        removeLink: false,
+        removeElements: false,
+        removeClasses: false,
         trigger: false
     }
 
@@ -179,5 +180,7 @@
         $('body').on('click', '[data-cloned] [data-mimic-remove] a', function () {
             $(this).parents('[data-cloned]').mimic('remove');
         });
+      
+        $('[data-clone]').mimic('init');
     });
 }(window.jQuery));
