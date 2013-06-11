@@ -91,8 +91,11 @@
                 }
               
                 this.last_element = $clone.attr('id');
-
-                $clone.insertAfter(this.element);
+                if (this.options.insertBeforeTrigger) {
+                    $clone.insertBefore($(this.options.trigger));
+                } else {
+                    $clone.insertAfter(this.element);
+                }
               
                 this.element.trigger('cloned', ['#' + $clone.attr('id')]);
 
@@ -166,7 +169,8 @@
         removeLink: false,
         removeElements: false,
         removeClasses: false,
-        trigger: false
+        trigger: false,
+        insertBeforeTrigger: false
     }
 
     $.fn.mimic.Constructor = Mimic;
