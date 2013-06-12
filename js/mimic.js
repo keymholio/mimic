@@ -12,7 +12,7 @@
         this.options = options;
         this.indicies = [];
         this.last_index = 0;
-        this.last_element;
+        this.last_element = '';
     };
 
     Mimic.prototype = {
@@ -28,7 +28,7 @@
             for (i = 1; i <= this.last_index; i += 1) {
                 this.indicies.push(i);
             }
-          
+
             //hide remove button
             this.element.find('[data-mimic-remove] a').hide();
 
@@ -36,7 +36,7 @@
             if (this.options.limit && this.last_index + 1 === this.options.limit) {
                 $(this.options.trigger).hide();
             }
-          
+
             if (this.options.trigger) {
                 $(this.options.trigger).on('click.mimic', function() {
                     that.replicate();
@@ -79,7 +79,7 @@
             if (this.element.length === 1) {
                 // update element's ID
                 $clone.attr('id', $clone.attr('id').replace(/\d/, index));
-                $clone.attr('data-cloned', '#'+ this.element.attr('id'));
+                $clone.attr('data-cloned', '#' + this.element.attr('id'));
                 // update children's ID and names
                 $clone.find('[id]').each(function() {
                     $(this).attr('id', $(this).attr('id').replace(/\d/, index));
@@ -90,36 +90,32 @@
 
                 // adding the remove link
                 $clone.find('[data-mimic-remove] a').show();
-              
+
                 this.last_element = $clone.attr('id');
                 if (this.options.insertBeforeTrigger) {
                     $clone.insertBefore($(this.options.trigger));
                 } else {
                     $clone.insertAfter(this.element);
                 }
-              
+
                 this.element.trigger('cloned', ['#' + $clone.attr('id')]);
 
             } else {
                 console.log("Mimicked element doesn't exist or is referring to too many elements: " + this.element.attr('id'));
             }
         },
-        
+
         clean: function ($clone) {
-            var $clean_item,
-                remove_elements = this.options.removeElements,
-                remove_classes = this.options.removeClasses;
-            if (remove_elements) { 
+            var remove_elements = this.options.removeElements,
+                remove_classes = this.options.removeClasses,
+                dotless_classes;
+            if (remove_elements) {
                 $clone.find(remove_elements).remove(remove_elements).end();
             }
-            if (this.options.removeClasses) {
-                remove_classes = remove_classes.replace(/\.|\s/g, "").split(',');
-                $clone.find(this.options.removeClasses).each(function () {
-                    $clean_item = $(this);
-                    $.each(remove_classes, function(index, css_class) {
-                        $clean_item.removeClass(css_class)
-                    });
-                });  
+            if (remove_classes) {
+                // remove dots
+                dotless_classes = remove_classes.replace(/\.|\,/g, "");
+                $clone.find(remove_classes).removeClass(dotless_classes);
             }
             return $clone;
         },
@@ -150,7 +146,7 @@
         return this.each(function () {
             var $this = $(this),
                 data = $this.data('mimic'),
-                options = $.extend({}, $.fn.mimic.defaults, $this.data(), typeof option == 'object' && option);
+                options = $.extend({}, $.fn.mimic.defaults, $this.data(), typeof option === 'object' && option);
             if (!data) {
                 data = new Mimic(this, options);
                 $this.data('mimic', data);
@@ -164,14 +160,14 @@
             }
         });
     };
-  
+
     $.fn.mimic.defaults = {
         limit: false,
         removeElements: false,
         removeClasses: false,
         trigger: false,
         insertBeforeTrigger: false
-    }
+    };
 
     $.fn.mimic.Constructor = Mimic;
 
@@ -184,7 +180,7 @@
         $('body').on('click', '[data-cloned] [data-mimic-remove] a', function () {
             $(this).parents('[data-cloned]').mimic('remove');
         });
-      
+
         $('[data-clone]').mimic('init');
     });
 }(window.jQuery));
