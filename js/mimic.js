@@ -28,6 +28,9 @@
             for (i = 1; i <= this.last_index; i += 1) {
                 this.indicies.push(i);
             }
+          
+            //hide remove button
+            this.element.find('[data-mimic-remove] a').hide();
 
             // remove add button if we are at our limit
             if (this.options.limit && this.last_index + 1 === this.options.limit) {
@@ -86,9 +89,7 @@
                 });
 
                 // adding the remove link
-                if (this.options.removeLink) {
-                  $clone.find('[data-mimic-remove]').append('<a href="javascript:void(0);">Remove</a>');
-                }
+                $clone.find('[data-mimic-remove] a').show();
               
                 this.last_element = $clone.attr('id');
                 if (this.options.insertBeforeTrigger) {
@@ -166,7 +167,6 @@
   
     $.fn.mimic.defaults = {
         limit: false,
-        removeLink: false,
         removeElements: false,
         removeClasses: false,
         trigger: false,
