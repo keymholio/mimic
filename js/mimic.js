@@ -10,9 +10,7 @@
     var Mimic = function (element, options) {
         this.element = $(element);
         this.options = options;
-        this.indicies = [];
-        this.last_index = 0;
-        this.last_element = '';
+        this.clones = [this.element.attr('id')];
     };
 
     Mimic.prototype = {
@@ -20,95 +18,83 @@
         constructor: Mimic,
 
         init: function () {
-            var i = 1,
-                that = this;
-            this.last_index = $('[data-cloned=#' + this.element.attr('id') + ']').length;
+            var that = this;
 
-            // update indicies array
-            for (i = 1; i <= this.last_index; i += 1) {
-                this.indicies.push(i);
-            }
+            $('[data-cloned]').each(function () {
+                that.clones.push($(this).attr('id'));
+            });
 
             //hide remove button
             this.element.find('[data-mimic-remove] a').hide();
 
             // remove add button if we are at our limit
-            if (this.options.limit && this.last_index + 1 === this.options.limit) {
+            if (this.options.limit && this.clones.length === this.options.limit) {
                 $(this.options.trigger).hide();
             }
 
             if (this.options.trigger) {
                 $(this.options.trigger).on('click.mimic', function() {
-                    that.replicate();
+                    that.mimic();
                 });
+            }
+        },
+
+        mimic: function () {
+            var limit = this.options.limit || 0;
+
+            if (limit && this.clones.length <= limit) {
+                this.replicate();
+                if (this.clones.length === limit) {
+                    $(this.options.trigger).hide();
+                }
+            } else if (!limit) {
+                this.replicate();
             }
         },
 
         replicate: function () {
             var $clone = this.clean(this.element.clone()),
-                index,
-                limit = this.options.limit ? this.options.limit - 1 : null;
+                index = this.clones.length;
 
-            this.last_index += 1;
-            index = this.last_index;
+            $clone.attr('data-cloned', '#' + this.element.attr('id'));
 
-            if (limit && this.options.trigger) {
-                if (index > limit) {
-                    index = this.last_index = 1;
-                }
+            this.update_ids_names($clone, index);
 
-                if (this.indicies.length === (limit - 1)) {
-                    $(this.options.trigger).hide();
-                }
+            // show the remove link
+            $clone.find('[data-mimic-remove] a').show();
 
-                if (this.indicies.length !== limit) {
-                    // update indicies tracker
-                    while (this.indicies.indexOf(index) !== -1) {
-                        if (index < limit) {
-                            index += 1;
-                        } else {
-                            index = 1;
-                        }
-                    }
-                }
-            }
+            this.clones.push($clone.attr('id'));
 
-            this.indicies.push(index);
-
-            // check if the element we're trying to replicate exists
-            if (this.element.length === 1) {
-                // update element's ID
-                $clone.attr('id', $clone.attr('id').replace(/\d/, index));
-                $clone.attr('data-cloned', '#' + this.element.attr('id'));
-                // update children's ID and names
-                $clone.find('[id]').each(function() {
-                    $(this).attr('id', $(this).attr('id').replace(/\d/, index));
-                });
-                $clone.find('[name]').each(function() {
-                    $(this).attr('name', $(this).attr('name').replace(/\d/, index)).val('');
-                });
-
-                // adding the remove link
-                $clone.find('[data-mimic-remove] a').show();
-
-                this.last_element = $clone.attr('id');
-                if (this.options.insertBeforeTrigger) {
-                    $clone.insertBefore($(this.options.trigger));
-                } else {
-                    $clone.insertAfter(this.element);
-                }
-
-                this.element.trigger('cloned', ['#' + $clone.attr('id')]);
-
+            if (this.options.insertBeforeTrigger) {
+                $clone.insertBefore($(this.options.trigger));
             } else {
-                console.log("Mimicked element doesn't exist or is referring to too many elements: " + this.element.attr('id'));
+                $clone.insertAfter(this.element);
             }
+
+            this.element.trigger('cloned', ['#' + $clone.attr('id')]);
+        },
+
+        update_ids_names: function ($el, index) {
+            // update children's ID and names
+            $el.find('[id]').each(function() {
+                $(this).attr('id', $(this).attr('id').replace(/\d/, index));
+            });
+
+            $el.find('[name]').each(function() {
+                $(this).attr('name', $(this).attr('name').replace(/\d/, index)).val('');
+            });
+
+            $el.attr('id', $el.attr('id').replace(/\d/, index));
         },
 
         clean: function ($clone) {
             var remove_elements = this.options.removeElements,
                 remove_classes = this.options.removeClasses,
-                dotless_classes;
+                dotless_classes,
+                data = $clone.data(),
+                i,
+                key,
+                keys;
             if (remove_elements) {
                 $clone.find(remove_elements).remove(remove_elements).end();
             }
@@ -117,24 +103,47 @@
                 dotless_classes = remove_classes.replace(/\.|\,/g, "");
                 $clone.find(remove_classes).removeClass(dotless_classes);
             }
+
+            // remove data attributes
+            keys = $.map(data, function(value, key) { return key; });
+
+            for (i = 0; i < keys.length; i += 1) {
+                key = keys[i].replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+                $clone.removeAttr("data-" + key);
+            }
+
             return $clone;
         },
 
         remove: function () {
             var source_id = this.element.data('cloned'),
-                $source = $(source_id).data('mimic'),
-                clone_index = parseInt(this.element.attr('id').match(/\d/)[0], 16),
-                index = $source.indicies.indexOf(clone_index);
-            if (this.element.length === 1) {
-                this.element.remove();
-                $source.indicies.splice(index, 1);
-                if ($source.options.limit) {
-                    $($source.options.trigger).show();
+                source = $(source_id).data('mimic'),
+                index = source.clones.indexOf(this.element.attr('id'));
+
+            source.clones.splice(index, 1);
+
+            if (source.options.limit) {
+                $(source.options.trigger).show();
+                // if it's not the last element update the ids
+                if (!this.element.is('[data-cloned]:last')) {
+                    this.element.remove();
+                    $('[data-cloned]').each(function (key) {
+                        source.update_ids_names($(this), key + 1);
+                    });
+                } else {
+                    this.element.remove();
                 }
-                $(source_id).trigger('removed', ['#' + this.element.attr('id')]);
+                // update clones list
+                source.clones = [$(source_id).attr('id')];
+                $('[data-cloned]').each(function () {
+                    source.clones.push($(this).attr('id'));
+                });
             } else {
-                console.log("Remove element doesn't exist or is referring to too many elements: " + $(this).attr('id'));
+                this.element.remove();
             }
+
+            // trigger callback
+            $(source_id).trigger('removed', ['#' + this.element.attr('id')]);
         }
     };
 
