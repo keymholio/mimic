@@ -34,36 +34,24 @@
 
             if (this.options.trigger) {
                 $(this.options.trigger).on('click.mimic', function() {
-                    that.mimic();
+                    that.replicate();
                 });
-            }
-        },
-
-        mimic: function () {
-            var limit = this.options.limit || 0;
-
-            if (limit && this.clones.length <= limit) {
-                this.replicate();
-                if (this.clones.length === limit) {
-                    $(this.options.trigger).hide();
-                }
-            } else if (!limit) {
-                this.replicate();
             }
         },
 
         replicate: function () {
             var $clone = this.clean(this.element.clone()),
-                index = this.clones.length;
+                index = this.clones.length,
+                limit = this.options.limit || 0;
 
             $clone.attr('data-cloned', '#' + this.element.attr('id'));
-
             this.update_ids_names($clone, index);
-
-            // show the remove link
             $clone.find('[data-mimic-remove] a').show();
-
             this.clones.push($clone.attr('id'));
+
+            if (this.options.limit && this.clones.length === limit) {
+                $(this.options.trigger).hide();
+            }
 
             if (this.options.insertBeforeTrigger) {
                 $clone.insertBefore($(this.options.trigger));
@@ -81,7 +69,7 @@
             });
 
             $el.find('[name]').each(function() {
-                $(this).attr('name', $(this).attr('name').replace(/\d/, index)).val('');
+                $(this).attr('name', $(this).attr('name').replace(/\d/, index));
             });
 
             $el.attr('id', $el.attr('id').replace(/\d/, index));
@@ -95,17 +83,25 @@
                 i,
                 key,
                 keys;
+
             if (remove_elements) {
                 $clone.find(remove_elements).remove(remove_elements).end();
             }
+
             if (remove_classes) {
                 // remove dots
                 dotless_classes = remove_classes.replace(/\.|\,/g, "");
                 $clone.find(remove_classes).removeClass(dotless_classes);
             }
 
+            $clone.find(':input:not(.mimic-ignore)').each(function() {
+                $(this).val('');
+            });
+
             // remove data attributes
+            /*jslint unparam: true*/
             keys = $.map(data, function(value, key) { return key; });
+            /*jslint unparam: false*/
 
             for (i = 0; i < keys.length; i += 1) {
                 key = keys[i].replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
