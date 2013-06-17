@@ -59,7 +59,7 @@
                 $clone.insertAfter(this.element);
             }
 
-            this.element.trigger('cloned', ['#' + $clone.attr('id')]);
+            this.element.trigger('cloned', ['#' + $clone.attr('id'), index]);
         },
 
         update_ids_names: function ($el, index) {
