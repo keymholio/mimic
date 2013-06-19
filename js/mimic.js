@@ -20,7 +20,8 @@
         init: function () {
             var that = this;
 
-            $('[data-cloned]').each(function () {
+            $('[data-cloned=#' + this.element.attr('id') + ']').each(function (key) {
+                that.update_ids_names($(this), key + 1);
                 that.clones.push($(this).attr('id'));
             });
 
@@ -37,6 +38,8 @@
                     that.replicate();
                 });
             }
+
+            this.element.trigger('initialized');
         },
 
         replicate: function () {
