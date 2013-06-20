@@ -46,16 +46,8 @@ test("Test if elements are renamed when there is a limit of 3", function() {
     ok($('#source1').length, "div#source1 exists on initial clone");
     ok($('#source2').length, "div#source2 exists on initial clone");
     $('#source1 [data-mimic-remove] a').trigger('click');
-    stop(); 
-    //pause 
-    setTimeout(function() {
-       //Make assertion 
-        ok($('#source1').length, "div#source1 exists after removing div#source1");
-        ok(!$('#source2').length, "div#source2 doesn't exist after removing div#source1");
-       // After the assertion called, restart the test
-       start();
-    }, 50);
-
+    ok($('#source1').length, "div#source1 exists after removing div#source1");
+    ok(!$('#source2').length, "div#source2 doesn't exist after removing div#source1");
 });
 
 test("Test removing a class on a clone", function() {

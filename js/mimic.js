@@ -123,18 +123,10 @@
 
             if (source.options.limit) {
                 $(source.options.trigger).show();
-                // if it's not the last element update the ids
-                if (!this.element.is('[data-cloned]:last')) {
-                    this.element.remove();
-                    $('[data-cloned]').each(function (key) {
-                        source.update_ids_names($(this), key + 1);
-                    });
-                } else {
-                    this.element.remove();
-                }
-                // update clones list
+                this.element.remove();
                 source.clones = [$(source_id).attr('id')];
-                $('[data-cloned]').each(function () {
+                $('[data-cloned]').each(function (key) {
+                    source.update_ids_names($(this), key + 1);
                     source.clones.push($(this).attr('id'));
                 });
             } else {
