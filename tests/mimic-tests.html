@@ -2,7 +2,7 @@
 <html>
     <head>
         <title>Mimic jQuery Plugin Tests</title>
-        <link rel="stylesheet" href="lib/qunit.css">
+        <link rel="stylesheet" href="http://code.jquery.com/qunit/qunit-git.css">
     </head>
     <body>
         <div>
@@ -11,18 +11,45 @@
             <h2 id="qunit-userAgent"></h2>
             <ol id="qunit-tests"></ol>
             <div id="qunit-fixture">
+                <!-- mock without data attrs -->
                 <div id="source0">
                     <input type="text" id="input0" />
                     <div class="monkey">Mr. Bojangles</div>
                     <div id="horse">Secretariat</div>
+                    <input type="text" class="goat" value="1">
+                    <input type="text" class="dolphin mimic-ignore" value="1">
                     <div data-mimic-remove><a href="#">Remove</a></div>
                 </div>
                 <a href="#" id="clone_btn">Add</a>
+
+                <!-- mock with data attrs -->
+                <div id="source_w_data0" 
+                    data-clone="true" 
+                    data-limit="3"
+                    data-remove-elements="#alligator"
+                    data-remove-classes=".monkey" 
+                    data-trigger="#clone_w_data_btn" 
+                    data-insert-before-trigger="true">
+                    <input type="text" id="input_w_data0" />
+                    <div class="monkey">Mr. Bojangles</div>
+                    <div id="alligator">Bitey</div>
+                    <input type="text" class="goat" value="1">
+                    <input type="text" class="dolphin mimic-ignore" value="1">
+                    <div data-mimic-remove><a href="#">Remove</a></div>
+                </div>
+                <a href="#" id="clone_w_data_btn">Add</a>
+
+                <!-- mock with existing clones-->
+                <div id="source_w_clones0" data-clone="true"></div>
+                <div id="source_w_clones1" data-cloned="#source_w_clones0"></div>
+                <div id="source_w_clones2" data-cloned="#source_w_clones0"></div>
+                <a href="#" id="clone_w_data_btn">Add</a>
+                
             </div>
         </div>
         <!-- library files -->
         <script src="http://code.jquery.com/jquery-1.10.0.js"></script>
-        <script src="lib/qunit.js"></script>
+        <script src="http://code.jquery.com/qunit/qunit-git.js"></script>
 
         <!-- dependant files -->
         <script src="../js/mimic.js"></script>

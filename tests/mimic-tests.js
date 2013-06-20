@@ -8,7 +8,15 @@ test("Test if elements can be cloned", function() {
     ok($('#source2').length, "A second element was cloned");
     $('#source0').mimic();
     ok($('#source3').length, "A third element was cloned");
-    equal($('#qunit-fixture').children('div:last').attr('id'), "source1", "The initial clone is the last one");
+    equal($('#clone_btn').prev('div').attr('id'), "source1", "The initial clone is the last one");
+});
+
+test("Test that the inputs are being cleared", function () {
+    ok($('#source0 .goat').val(), "The source0 goat input is 1 on load");
+    ok($('#source0 .dolphin').val(), "The source0 dolphin input is 1 on load");
+    $('#source0').mimic();
+    ok(!$('#source1 .goat').val(), "The source1 goat input is empty after becoming a clone");
+    ok($('#source1 .dolphin').val(), "The source1 dolphin input is 1 (ignored) after becoming a clone");
 });
 
 module("Tests with options");
@@ -78,9 +86,48 @@ test("Test adding a clone before a trigger", function() {
     $('#clone_btn')
         .trigger('click')
         .trigger('click');
-    equal($('#qunit-fixture').children('div:last').attr('id'), "source2", "The last clone is #source2");
+    equal($('#clone_btn').prev('div').attr('id'), "source2", "The last clone is #source2");
 });
 
 module("Test callbacks");
 
+test("Test callbacks", function () {
+    var init = 0,
+        cloned = 0,
+        cloned_element,
+        cloned_index;
+    $('#source0').on('initialized', function () {
+        init = 1;
+    });
+    $('#source0').on('cloned', function (e, el, index) {
+        cloned = 1;
+        cloned_element = el;
+        cloned_index = index;
+    });
+    $('#source0').mimic('init');
+    ok (init, "The initialized event has been raised");
+    $('#source0').mimic();
+    ok (init, "The cloned event has been raised");
+    equal(cloned_element, "#source1", "The cloned element's ID is #source1");
+    ok (cloned_index, "The cloned index is 1");
+});
+
 module("Test data attributes");
+
+test("Test when options are added with data attributes", function () {
+    $('#source_w_data0').mimic('init');
+    $('#clone_w_data_btn')
+        .trigger('click')
+        .trigger('click');
+    ok($('#clone_w_data_btn').is(':hidden'), "The clone link is hidden after three clones");
+    ok(!$('#source_w_data1 .monkey').length, "The clone doesn't have a 'monkey' class");
+    ok(!$('#source_w_data1 #alligator').length, "The clone doesn't have div#alligator");
+    equal($('#clone_w_data_btn').prev('div').attr('id'), "source_w_data2", "The last clone is #source_w_data2");
+});
+
+module("Test for existing clones");
+
+test("Test whether the existing clones are registered with the plugin", function () {
+    $('#source_w_clones0').removeData('mimic').mimic('init');
+    equal($('#source_w_clones0').data('mimic').clones.length, 3, "There are three elements initialized");
+});
