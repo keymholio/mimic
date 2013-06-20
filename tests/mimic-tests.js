@@ -107,7 +107,7 @@ test("Test callbacks", function () {
     $('#source0').mimic('init');
     ok (init, "The initialized event has been raised");
     $('#source0').mimic();
-    ok (init, "The cloned event has been raised");
+    ok (cloned, "The cloned event has been raised");
     equal(cloned_element, "#source1", "The cloned element's ID is #source1");
     ok (cloned_index, "The cloned index is 1");
 });
