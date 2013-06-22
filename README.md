@@ -102,7 +102,7 @@ The mimic class exposes a few events for hooking into cloning functionality.
     <tr>
         <td>initialized</td>
         <td>none</td>
-        <td>This event fires when the `init` method is called.</td>
+        <td>This event is fired after the `init` method is called.</td>
     </tr>
     <tr>
         <td>cloned</td>
