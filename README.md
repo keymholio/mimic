@@ -56,3 +56,35 @@ Options can be passed via data attributes or JavaScript. For data attributes, ap
         <td>This option will place the clone before the trigger. By default the clone is place after the source. The data attribute should be specified like so: data-insert-before-trigger="true".</td>
     </tr>
 </table>
+
+### Methods
+
+##### .mimic(options)
+
+Activates your element to be cloned. Accepts an optional options `object`
+
+    $('#myClone').mimic({
+        trigger: "#myCloneBtn"
+    })
+
+##### .mimic('init')
+
+Manually initializes a clone. Updates indexes of elements with an ID or existing clones and shows or hides trigger if used.
+
+    $('#myClone0').mimic('init')
+
+##### .mimic('replicate')
+
+Manually clones an element.
+
+    $('#myClone0').mimic('replicate')
+
+This is equivalent to:
+
+    $('#myClone0').mimic()
+
+##### .mimic('remove')
+
+Manually removes a clone. Note that we call this method on the 'remove' link.
+
+    $('#myClone1 [data-mimic-remove] a').mimic('remove')
