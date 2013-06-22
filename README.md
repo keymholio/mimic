@@ -4,7 +4,7 @@ Mimic is a jQuery plugin to replicate markup.
 ## Usage
 
 ### Via Javascript
-Replicate markup with id `myClone0` with a single line of Javascript
+Replicate markup with id `myClone0` with a single line of Javascript. Note: Your source clones need to have an ID starting with a 0 index.
 
     $('#myClone0').mimic(options);
 
