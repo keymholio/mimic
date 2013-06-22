@@ -88,3 +88,35 @@ This is equivalent to:
 Manually removes a clone. Note that we call this method on the 'remove' link.
 
     $('#myClone1 [data-mimic-remove] a').mimic('remove')
+
+### Events
+
+The mimic class exposes a few events for hooking into cloning functionality.
+
+<table>
+    <tr>
+        <th>Event</th>
+        <th>Parameters</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>initialized</td>
+        <td>none</td>
+        <td>This event fires when the `init` method is called.</td>
+    </tr>
+    <tr>
+        <td>cloned</td>
+        <td>element_id, index</td>
+        <td>This event is fired after an element has been cloned. The cloned element's ID and new index are passed as parameters.</td>
+    </tr>
+    <tr>
+        <td>removed</td>
+        <td>element_id</td>
+        <td>This event is fired after an clone has been removed. The clone's ID is passed as a parameter.</td>
+    </tr>
+</table>
+
+    $('$myClone0').on('cloned', function (e, element_id, index) {
+        // do something
+    })
+
