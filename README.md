@@ -18,63 +18,16 @@ Activate a clone without writing Javascript. Set `data-clone="true"` on the sour
 
 Options can be passed via data attributes or JavaScript. For data attributes, append the option name to data-, as in `data-limit="3"`.
 
-<table>
-    <tr>
-        <th>Name</th>
-        <th>type</th>
-        <th>default</th>
-        <th>description</th>
-    </tr>
-    <tr>
-        <td>trigger</td>
-        <td>string</td>
-        <td>false</td>
-        <td>If a trigger is provided, the clone event will be delegated to this element. </td>
-    </tr>
-    <tr>
-        <td>limit</td>
-        <td>number</td>
-        <td>false</td>
-        <td>Limits the amount of clones that can be shown. This number includes the source element.</td>
-    </tr>
-    <tr>
-        <td>removeElements</td>
-        <td>string</td>
-        <td>false</td>
-        <td>Specify selecters of elements that should be removed when replicated. The data attribute should be specified like so: <code>data-remove-elements="#myElement"</code>.</td>
-    </tr>
-    <tr>
-        <td>removeClasses</td>
-        <td>string</td>
-        <td>false</td>
-        <td>Specify CSS classes that should be removed when replicated. Be sure to add the dot before the class name, like so: <code>data-remove-classes=".my-class"</code>.</td>
-    </tr>
-    <tr>
-        <td>insertBeforeTrigger</td>
-        <td>boolean</td>
-        <td>false</td>
-        <td>This option will place the clone before the trigger. By default the clone is place after the source. The data attribute should be specified like so: <code>data-insert-before-trigger="true"</code>.</td>
-    </tr>
-</table>
+*   `trigger` If a trigger string is provided, the clone event will be delegated to this element.
+*   `limit` Limits the amount of clones that can be shown. This number includes the source element.
+*   `removeElements` Specify selecters of elements that should be removed when replicated. The data attribute should be specified like so: `data-remove-elements="#myElement"`.
+*   `removeClasses` Specify CSS classes that should be removed when replicated. Be sure to add the dot before the class name, like so: `data-remove-classes=".my-class"`.
+*   `insertBeforeTrigger` This option will place the clone before the trigger. By default the clone is place after the source. The data attribute should be specified like so: `data-insert-before-trigger="true"`.
 
 ### HTML Attributes
-<table>
-    <tr>
-        <th>Name</th>
-        <th>Value</th>
-        <th>description</th>
-    </tr>
-    <tr>
-        <td>id</td>
-        <td>myClone<strong>0</strong></td>
-        <td>The source element needs to have an ID with a zero index. The subsequent clones would be myClone1, myClone2, etc.</td>
-    </tr>
-    <tr>
-        <td>class</td>
-        <td nowrap>mimic-ignore</td>
-        <td>Add this class to a input element and the value of that element will not be cleared when cloned.</td>
-    </tr>
-</table>
+
+*   `id="myClone0"` The source element needs to have an ID with a zero index. The subsequent clones would be myClone1, myClone2, etc.
+*   `class="mimic-ignore"` Add this class to a input element and the value of that element will not be cleared when cloned.
 
 ### Methods
 
@@ -112,30 +65,13 @@ Manually removes a clone. Note that we call this method on the 'remove' link.
 
 The mimic class exposes a few events for hooking into cloning functionality.
 
-<table>
-    <tr>
-        <th>Event</th>
-        <th>Parameters</th>
-        <th>Description</th>
-    </tr>
-    <tr>
-        <td>initialized</td>
-        <td>none</td>
-        <td>This event is fired after the `init` method is called.</td>
-    </tr>
-    <tr>
-        <td>cloned</td>
-        <td>element_id, index</td>
-        <td>This event is fired after an element has been cloned. The cloned element's ID and new index are passed as parameters.</td>
-    </tr>
-    <tr>
-        <td>removed</td>
-        <td>element_id</td>
-        <td>This event is fired after an clone has been removed. The clone's ID is passed as a parameter.</td>
-    </tr>
-</table>
+*   `initialized` This event is fired after the `init` method is called.
+*   `cloned` This event is fired after an element has been cloned. The cloned element's ID and new index are passed as parameters.
+*   `removed` This event is fired after an clone has been removed. The clone's ID is passed as a parameter.
 
-    $('$myClone0').on('cloned', function (e, element_id, index) {
-        // do something
-    })
+```
+$('$myClone0').on('cloned', function (e, element_id, index) {
+    // do something
+})
+```
 
