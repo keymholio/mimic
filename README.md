@@ -71,7 +71,7 @@ Options can be passed via data attributes or JavaScript. For data attributes, ap
     </tr>
     <tr>
         <td>class</td>
-        <td>mimic-ignore</td>
+        <td nowrap>mimic-ignore</td>
         <td>Add this class to a input element and the value of that element will not be cleared when cloned.</td>
     </tr>
 </table>
